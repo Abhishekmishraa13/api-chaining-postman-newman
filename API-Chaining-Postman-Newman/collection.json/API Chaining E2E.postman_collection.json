@@ -1,0 +1,222 @@
+{
+  "info": {
+    "_postman_id": "4c824966-d584-481b-b8f5-ed60119f2c58",
+    "name": "API Chaining E2E",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51140044",
+    "_collection_link": "https://go.postman.co/collection/51140044-4c824966-d584-481b-b8f5-ed60119f2c58?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "API 1 — Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Convert response into JSON",
+              "let response = pm.response.json();",
+              "",
+              "// Save access token",
+              "pm.environment.set(\"token\", response.accessToken);",
+              "",
+              "// Save user ID",
+              "pm.environment.set(\"userId\", response.id);",
+              "",
+              "// Save username",
+              "pm.environment.set(\"username\", response.username);",
+              "",
+              "// Print values in console for debugging",
+              "console.log(response.accessToken);",
+              "console.log(response.id);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"emilys\",\n  \"password\": \"emilyspass\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://dummyjson.com/auth/login",
+          "protocol": "https",
+          "host": [
+            "dummyjson",
+            "com"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "API 2 — Get User Profile",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Convert response",
+              "let response = pm.response.json();",
+              "",
+              "// Save first name",
+              "pm.environment.set(\"firstName\", response.firstName);",
+              "",
+              "console.log(response.firstName);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer{{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://dummyjson.com/users/{{userId}}",
+          "protocol": "https",
+          "host": [
+            "dummyjson",
+            "com"
+          ],
+          "path": [
+            "users",
+            "{{userId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "API 3 — Get Products",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Convert response",
+              "let response = pm.response.json();",
+              "",
+              "// Get first product ID",
+              "pm.environment.set(",
+              "    \"productId\",",
+              "    response.products[0].id",
+              ");",
+              "",
+              "// Debugging",
+              "console.log(response.products[0].id);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://dummyjson.com/products",
+          "protocol": "https",
+          "host": [
+            "dummyjson",
+            "com"
+          ],
+          "path": [
+            "products"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "API 4 — Add To Cart",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Convert response",
+              "let response = pm.response.json();",
+              "",
+              "// Save cart ID",
+              "pm.environment.set(\"cartId\", response.id);",
+              "",
+              "console.log(response.id);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"products\": [\n    {\n      \"id\": \"{{productId}}\",\n      \"quantity\": 1\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://dummyjson.com/carts/add",
+          "protocol": "https",
+          "host": [
+            "dummyjson",
+            "com"
+          ],
+          "path": [
+            "carts",
+            "add"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "API 5 — Get Cart",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://dummyjson.com/carts/{{cartId}}",
+          "protocol": "https",
+          "host": [
+            "dummyjson",
+            "com"
+          ],
+          "path": [
+            "carts",
+            "{{cartId}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
